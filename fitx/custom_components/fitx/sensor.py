@@ -9,6 +9,7 @@ from homeassistant.components.rest.data import RestData
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import (
     CONF_NAME,
+    CONF_SCAN_INTERVAL,
 )
 from homeassistant.exceptions import PlatformNotReady
 import homeassistant.helpers.config_validation as cv
@@ -17,10 +18,11 @@ _LOGGER = logging.getLogger(__name__)
 
 from .const import (
     ATTR_ADDRESS,
+    ATTR_ID,
     ATTR_STUDIO_NAME,
+    ATTR_URL,
     CONF_ID,
     DEFAULT_ENDPOINT,
-    DEFAULT_NAME,
     ICON,
     CONF_LOCATIONS,
     REQUEST_AUTH,
@@ -30,15 +32,14 @@ from .const import (
     REQUEST_VERIFY_SSL,
     SENSOR_PREFIX,
     UNIT_OF_MEASUREMENT,
-    SCAN_INTERVAL,
 )
 
-SCAN_INTERVAL = timedelta(minutes=SCAN_INTERVAL)
+SCAN_INTERVAL = timedelta(minutes=10)
 
 STUDIO_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ID): cv.string,
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+        vol.Optional(CONF_NAME): cv.string,
     }
 )
 
@@ -54,29 +55,54 @@ class FitxRequestError(Exception):
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the sensor platform."""
-    sensors = [FitxSensor(hass, location) for location in config[CONF_LOCATIONS]]
-    async_add_entities(sensors, update_before_add=True)
+    # sensors = [FitxSensor(hass, location) for location in config[CONF_LOCATIONS]]
+    sensors = []
+    for location in config[CONF_LOCATIONS]:
+        id = location[CONF_ID].lower().replace(" ", "-")
+        url = DEFAULT_ENDPOINT.format(id=id)
+        name = None
+        if CONF_NAME in location:
+            name = location[CONF_NAME]
+
+        rest = RestData(hass, REQUEST_METHOD, url, REQUEST_AUTH, REQUEST_HEADERS, None, REQUEST_PAYLOAD, REQUEST_VERIFY_SSL)
+        await rest.async_update()
+
+        if rest.data is None:
+            raise PlatformNotReady
+        
+        sensors.append(FitxSensor(rest, id, url, name))
+
+    for sensor in sensors:
+        _LOGGER.warning(str(type(sensor)))
+
+    async_add_entities(sensors, True)
+
+    _LOGGER.warning("got to the end")
 
 
 class FitxSensor(SensorEntity):
     """Representation of a FitX sensor."""
 
-    def __init__(self, hass, location):
+    def __init__(self, rest, id, url, name):
         """Initialize a FitX sensor."""
+        self.rest = rest
+        self._id = id
+        self._url = url
+        self._attrs = {
+                        ATTR_ID: self._id,
+                        ATTR_URL: self._url,
+                      }
+        self._name = self._id
         self._state = None
-        self._id = location[CONF_ID].lower().replace(" ", "-")
-        self._url = DEFAULT_ENDPOINT.format(id=self._id)
-        self._name = location[CONF_ID]
+        self._available = True
 
-        if CONF_NAME in location:
-            self._name = location[CONF_NAME]
-
-        self.rest = RestData(hass, REQUEST_METHOD, self._url, REQUEST_AUTH, REQUEST_HEADERS, None, REQUEST_PAYLOAD, REQUEST_VERIFY_SSL)
+        if name is not None:
+            self._name = name
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return SENSOR_PREFIX + self._id
+        return SENSOR_PREFIX + self._name
 
     @property
     def native_unit_of_measurement(self):
@@ -93,9 +119,14 @@ class FitxSensor(SensorEntity):
         """Return the state of the device."""
         return self._state
 
+    @property
+    def available(self):
+        """Return True if entity is available."""
+        return self._available
+
     def device_state_attributes(self):
         """Return the state attributes."""
-        return self.attrs
+        return self._attrs
 
     def _get_raw_data(self):
         """Parse the html extraction in the executor."""
@@ -110,11 +141,6 @@ class FitxSensor(SensorEntity):
 
     async def async_added_to_hass(self):
         """Ensure the data from the initial update is reflected in the state."""
-        await self.rest.async_update()
-
-        if self.rest.data is None:
-            raise PlatformNotReady
-        
         await self._async_update_from_rest_data()
 
     async def _async_update_from_rest_data(self):
@@ -125,8 +151,8 @@ class FitxSensor(SensorEntity):
 
         try:
             raw_data = await self.hass.async_add_executor_job(self._get_raw_data)
-            self.attrs[ATTR_STUDIO_NAME] = str(raw_data.find("h1", class_="studio_hero__headline")).split("</span>")[1].split("</h1>")[0]
-            self.attrs[ATTR_ADDRESS] = str(raw_data.find("p", class_="studio_hero__address")).split(">\n          ")[1].split("        </p>")[0].replace(" · ", ", ")
+            self._attrs[ATTR_STUDIO_NAME] = str(raw_data.find("h1", class_="studio_hero__headline")).split("</span>")[1].split("</h1>")[0]
+            self._attrs[ATTR_ADDRESS] = str(raw_data.find("p", class_="studio_hero__address")).split(">\n          ")[1].split("        </p>")[0].replace(" · ", ", ")
             studioGraph = raw_data.find("section", class_="studio_graph")
             self._state = int(studioGraph["data-current-day-data"][1:-1].split(",")[-1])
             if self._state is None:
@@ -135,3 +161,4 @@ class FitxSensor(SensorEntity):
         except FitxRequestError:
             self._available = False
             _LOGGER.exception("Error retrieving data from FitX website.")
+            return
