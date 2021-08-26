@@ -1,3 +1,3 @@
-# FitX Gym Usage Sensor for Home Assistant for Home Assistant
+# FitX Gym Usage Sensor for Home Assistant
 
 ## Installation
