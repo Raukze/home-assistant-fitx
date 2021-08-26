@@ -1,0 +1,5 @@
+{
+  "name": "FitX Gym Usage Sensor for Home Assistant",
+  "render_readme": true,
+  "iot_class": "cloud_polling"
+}

@@ -1,0 +1,1 @@
+"""FitX Custom Component."""
