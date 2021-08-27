@@ -30,7 +30,6 @@ from .const import (
     REQUEST_METHOD,
     REQUEST_PAYLOAD,
     REQUEST_VERIFY_SSL,
-    SENSOR_PREFIX,
     UNIT_OF_MEASUREMENT,
 )
 
@@ -72,12 +71,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         
         sensors.append(FitxSensor(rest, id, url, name))
 
-    for sensor in sensors:
-        _LOGGER.warning(str(type(sensor)))
-
-    async_add_entities(sensors, True)
-
-    _LOGGER.warning("got to the end")
+    async_add_entities(sensors, update_before_add=True)
 
 
 class FitxSensor(SensorEntity):
@@ -102,7 +96,12 @@ class FitxSensor(SensorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return SENSOR_PREFIX + self._name
+        return self._name
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique ID of the sensor."""
+        return self._id
 
     @property
     def native_unit_of_measurement(self):
@@ -115,7 +114,7 @@ class FitxSensor(SensorEntity):
         return ICON
 
     @property
-    def native_value(self):
+    def state(self):
         """Return the state of the device."""
         return self._state
 
@@ -151,8 +150,11 @@ class FitxSensor(SensorEntity):
 
         try:
             raw_data = await self.hass.async_add_executor_job(self._get_raw_data)
+            
             self._attrs[ATTR_STUDIO_NAME] = str(raw_data.find("h1", class_="studio_hero__headline")).split("</span>")[1].split("</h1>")[0]
+            
             self._attrs[ATTR_ADDRESS] = str(raw_data.find("p", class_="studio_hero__address")).split(">\n          ")[1].split("        </p>")[0].replace(" · ", ", ")
+            
             studioGraph = raw_data.find("section", class_="studio_graph")
             self._state = int(studioGraph["data-current-day-data"][1:-1].split(",")[-1])
             if self._state is None:

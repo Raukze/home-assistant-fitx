@@ -6,7 +6,6 @@ ATTR_ADDRESS = "address"
 ATTR_STUDIO_NAME = "studioName"
 ATTR_ID = CONF_ID
 ATTR_URL = "url"
-SENSOR_PREFIX = 'fitx_'
 DEFAULT_ENDPOINT = "https://www.fitx.de/fitnessstudios/{id}"
 REQUEST_METHOD = "GET"
 REQUEST_AUTH = None
