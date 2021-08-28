@@ -1,5 +1,5 @@
 {
-  "codeowners": ["@raukze"],
+  "codeowners": ["@Raukze"],
   "config_flow": false,
   "dependencies": [],
   "documentation": "https://github.com/raukze/home-assistant-fitx",

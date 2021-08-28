@@ -9,7 +9,7 @@ from homeassistant.components.rest.data import RestData
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import (
     CONF_NAME,
-    CONF_SCAN_INTERVAL,
+    PERCENTAGE,
 )
 from homeassistant.exceptions import PlatformNotReady
 import homeassistant.helpers.config_validation as cv
@@ -30,7 +30,6 @@ from .const import (
     REQUEST_METHOD,
     REQUEST_PAYLOAD,
     REQUEST_VERIFY_SSL,
-    UNIT_OF_MEASUREMENT,
 )
 
 SCAN_INTERVAL = timedelta(minutes=10)
@@ -57,9 +56,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     # sensors = [FitxSensor(hass, location) for location in config[CONF_LOCATIONS]]
     sensors = []
     for location in config[CONF_LOCATIONS]:
-        id = location[CONF_ID].lower().replace(" ", "-")
+        id = location[CONF_ID].lower().replace(" ", "-").replace("ä","ae").replace("ü","ue").replace("ö","oe")
         url = DEFAULT_ENDPOINT.format(id=id)
-        name = None
+        name = location[CONF_ID]
         if CONF_NAME in location:
             name = location[CONF_NAME]
 
@@ -104,9 +103,9 @@ class FitxSensor(SensorEntity):
         return self._id
 
     @property
-    def native_unit_of_measurement(self):
+    def unit_of_measurement(self):
         """Return the unit the value is expressed in."""
-        return UNIT_OF_MEASUREMENT
+        return PERCENTAGE
 
     @property
     def icon(self):
@@ -123,7 +122,8 @@ class FitxSensor(SensorEntity):
         """Return True if entity is available."""
         return self._available
 
-    def device_state_attributes(self):
+    @property
+    def extra_state_attributes(self):
         """Return the state attributes."""
         return self._attrs
 
