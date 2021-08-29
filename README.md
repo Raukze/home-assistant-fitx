@@ -1,6 +1,3 @@
-[![](https://img.shields.io/github/release/Raukze/home-assistant-fitx.svg?style=flat-square)](https://github.com/Raukze/home-assistant-fitx/releases/latest)
-[![](https://img.shields.io/travis/Raukze/home-assistant-fitx.svg?style=flat-square)](https://travis-ci.org/Raukze/home-assistant-fitx)
-
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 # 🏋️ FitX Gym Usage Sensor
 
@@ -20,8 +17,8 @@ Copy the `fitx` folder from `custom_components/` to the `custom_components/`dire
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| id | string | **required** | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations"). You need the `id` part `https://www.fitx.de/fitnessstudios/{id}` |
-| name | string | optional | Name of the FitX usage sensor. |
+| id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations"). You need the `id` part `https://www.fitx.de/fitnessstudios/{id}` |
+| name | string | Value of `id` | Name of the FitX usage sensor. |
 
 ### Example Configuration
 
@@ -40,3 +37,6 @@ sensor:
 - **url**: The `URL` used for the web request.
 - **studioName**: The gym location's name
 - **address**: The address of the gym.
+
+#### Example
+![Example Sensor](screenshots/screenshot-example-sensor.png "Gym Berlin-Alexanderplatz Example")
