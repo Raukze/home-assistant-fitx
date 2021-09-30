@@ -39,4 +39,4 @@ sensor:
 - **address**: The address of the gym.
 
 #### Example
-![Example Sensor](screenshots/screenshot-example-sensor.png "Gym Berlin-Alexanderplatz Example")
+![Example Sensor](screenshots/screenshot-example-sensor.png | width=100)
