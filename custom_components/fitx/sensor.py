@@ -56,7 +56,13 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     # sensors = [FitxSensor(hass, location) for location in config[CONF_LOCATIONS]]
     sensors = []
     for location in config[CONF_LOCATIONS]:
-        id = location[CONF_ID].lower().replace(" ", "-").replace("ä","ae").replace("ü","ue").replace("ö","oe")
+        id = location[CONF_ID].lower()\
+            .replace(" ", "-")\
+            .replace("ä", "ae")\
+            .replace("ü", "ue")\
+            .replace("ö", "oe")\
+            .replace("ß", "ss")\
+            .replace(".", "")
         url = DEFAULT_ENDPOINT.format(id=id)
         name = location[CONF_ID]
         if CONF_NAME in location:
