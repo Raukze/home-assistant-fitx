@@ -1,4 +1,17 @@
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![HACS Default][hacs_shield]][hacs]
+[![GitHub Latest Release][releases_shield]][latest_release]
+[![GitHub All Releases][downloads_total_shield]][releases]
+
+[hacs_shield]: https://img.shields.io/static/v1.svg?label=HACS&message=Default&style=popout&color=green&labelColor=41bdf5&logo=HomeAssistantCommunityStore&logoColor=white
+[hacs]: https://hacs.xyz/docs/default_repositories
+
+[latest_release]: https://github.com/Raukze/home-assistant-fitx/releases/latest
+[releases_shield]: https://img.shields.io/github/release/Raukze/home-assistant-fitx.svg?style=popout
+
+[releases]: https://github.com/Raukze/home-assistant-fitx/releases
+[downloads_total_shield]: https://img.shields.io/github/downloads/Raukze/Raukze/home-assistant-fitx/total
+
+
 # 🏋️ FitX Gym Usage Sensor
 
 ## Installation
@@ -39,4 +52,4 @@ sensor:
 - **address**: The address of the gym.
 
 #### Example
-![Example Sensor](screenshots/screenshot-example-sensor.png | width=100)
+<img src="screenshots/screenshot-example-sensor.png" width="300">
