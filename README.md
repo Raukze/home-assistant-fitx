@@ -9,7 +9,7 @@
 [releases_shield]: https://img.shields.io/github/release/Raukze/home-assistant-fitx.svg?style=popout
 
 [releases]: https://github.com/Raukze/home-assistant-fitx/releases
-[downloads_total_shield]: https://img.shields.io/github/downloads/Raukze/Raukze/home-assistant-fitx/total
+[downloads_total_shield]: https://img.shields.io/github/downloads/Raukze/home-assistant-fitx/total
 
 
 # 🏋️ FitX Gym Usage Sensor
