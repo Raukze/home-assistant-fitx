@@ -2,5 +2,7 @@
   "name": "FitX Gym Usage Sensor for Home Assistant",
   "content_in_root": false,
   "render_readme": true,
+  "country": "DE",
+  "domain": ["sensor"],
   "iot_class": "cloud_polling"
 }
