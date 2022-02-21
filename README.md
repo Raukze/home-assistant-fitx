@@ -52,4 +52,4 @@ sensor:
 - **address**: The address of the gym.
 
 #### Example
-<img src="screenshots/screenshot-example-sensor.png" width="300">
+<img src="https://raw.githubusercontent.com/Raukze/home-assistant-fitx/main/screenshots/screenshot-example-sensor.png" width=50%>
