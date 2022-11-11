@@ -9,5 +9,5 @@
   "name": "FitX Gym Usage Sensor for Home Assistant",
   "requirements": ["beautifulsoup4>=4.4.0"],
   "after_dependencies": ["rest"],
-  "version": "0.0.1"
+  "version": "0.0.3"
 }
