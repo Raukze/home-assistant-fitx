@@ -1,5 +1,5 @@
 {
-  "name": "FitX Gym Usage Sensor for Home Assistant",
+  "name": "FitX Gym Utilization Rate Sensor for Home Assistant",
   "content_in_root": false,
   "render_readme": true,
   "zip_release": true,

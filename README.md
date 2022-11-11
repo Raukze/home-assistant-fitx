@@ -31,7 +31,7 @@ Copy the `fitx` folder from `custom_components/` to the `custom_components/`dire
 | Name | Type | Default | Description |
 |---|---|---|---|
 | id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations"). You need the `id` part `https://www.fitx.de/fitnessstudios/{id}` <br> Note: for some FitX locations this does not work. The page needs to have the utilization graph towards the bottom of the page.  |
-| name | string | Value of `id` | Name of the FitX usage sensor. |
+| name | string | Value of `id` | Name of the FitX utilization rate sensor. |
 
 ### Example Configuration
 
