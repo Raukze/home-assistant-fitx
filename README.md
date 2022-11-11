@@ -12,7 +12,7 @@
 [downloads_total_shield]: https://img.shields.io/github/downloads/Raukze/home-assistant-fitx/total
 
 
-# 🏋️ FitX Gym Usage Sensor
+# 🏋️ FitX Gym Utilization Rate Sensor
 
 ## Installation
 
@@ -30,19 +30,19 @@ Copy the `fitx` folder from `custom_components/` to the `custom_components/`dire
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations"). You need the `id` part `https://www.fitx.de/fitnessstudios/{id}` |
+| id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations"). You need the `id` part `https://www.fitx.de/fitnessstudios/{id}` <br> Note: for some FitX locations this does not work. The page needs to have the utilization graph towards the bottom of the page.  |
 | name | string | Value of `id` | Name of the FitX usage sensor. |
 
 ### Example Configuration
 
-So if the gym you want to track is https://www.fitx.de/fitnessstudios/berlin-alexanderplatz add the following to your `configuration.yaml`:
+So if the gym you want to track is https://www.fitx.de/fitnessstudios/bielefeld-mitte add the following to your `configuration.yaml`:
 
 ```yaml
 sensor:
   - platform: fitx
     locations:
-      - id: berlin-alexanderplatz
-        name: Gym Berlin
+      - id: bielefeld-mitte
+        name: Gym Bielefeld
 ```
 
 ### Sensor Attributes
