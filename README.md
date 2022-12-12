@@ -30,8 +30,9 @@ Copy the `fitx` folder from `custom_components/` to the `custom_components/`dire
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations"). You need the `id` part `https://www.fitx.de/fitnessstudios/{id}` <br> Note: for some FitX locations this does not work. The page needs to have the utilization graph towards the bottom of the page.  |
+| id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations").  |
 | name | string | Value of `id` | Name of the FitX utilization rate sensor. |
+| num_id **(required)** | int | | Numerical id of the studio. See [Numeric ID](#numeric-id)
 
 ### Example Configuration
 
@@ -43,13 +44,15 @@ sensor:
     locations:
       - id: bielefeld-mitte
         name: Gym Bielefeld
+        num_id: 1516366190
 ```
 
 ### Sensor Attributes
 - **id**: The `id` set in the config.
 - **url**: The `URL` used for the web request.
-- **studioName**: The gym location's name
-- **address**: The address of the gym.
+
+### Numeric ID
+Look at this [Gist](https://gist.github.com/JayReturns/0ca493e39a2eebf4c2434e0603dd9148) and run it with your FitX Studio Name to get the numeric ID.
 
 #### Example
 <img src="https://raw.githubusercontent.com/Raukze/home-assistant-fitx/main/screenshots/screenshot-example-sensor.png" width=50%>
