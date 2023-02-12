@@ -1,7 +1,7 @@
 """FitX sensor platform."""
 import logging
 
-from bs4 import BeautifulSoup
+import json
 import voluptuous as vol
 from datetime import timedelta
 
@@ -22,7 +22,9 @@ from .const import (
     ATTR_STUDIO_NAME,
     ATTR_URL,
     CONF_ID,
+    CONF_NUM_ID,
     DEFAULT_ENDPOINT,
+    ATTR_NUM_ID,
     ICON,
     CONF_LOCATIONS,
     REQUEST_AUTH,
@@ -38,6 +40,7 @@ STUDIO_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ID): cv.string,
         vol.Optional(CONF_NAME): cv.string,
+        vol.Required(CONF_NUM_ID): cv.string
     }
 )
 
@@ -63,7 +66,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             .replace("ö", "oe")\
             .replace("ß", "ss")\
             .replace(".", "")
-        url = DEFAULT_ENDPOINT.format(id=id)
+        num_id = location[CONF_NUM_ID]
+        url = DEFAULT_ENDPOINT.format(num_id=num_id)
         name = location[CONF_ID]
         if CONF_NAME in location:
             name = location[CONF_NAME]
@@ -74,7 +78,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         if rest.data is None:
             raise PlatformNotReady
         
-        sensors.append(FitxSensor(rest, id, url, name))
+        sensors.append(FitxSensor(rest, id, url, name, num_id))
 
     async_add_entities(sensors, update_before_add=True)
 
@@ -82,14 +86,17 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class FitxSensor(SensorEntity):
     """Representation of a FitX sensor."""
 
-    def __init__(self, rest, id, url, name):
+    def __init__(self, rest, id, url, name, num_id):
         """Initialize a FitX sensor."""
         self.rest = rest
         self._id = id
         self._url = url
+        self._num_id = num_id
+        # TODO: Get attributes from https://mein.fitx.de/nox/public/v1/studios
         self._attrs = {
                         ATTR_ID: self._id,
                         ATTR_URL: self._url,
+                        ATTR_NUM_ID: self._num_id
                       }
         self._name = self._id
         self._state = None
@@ -135,7 +142,7 @@ class FitxSensor(SensorEntity):
 
     def _get_raw_data(self):
         """Parse the html extraction in the executor."""
-        raw_data = BeautifulSoup(self.rest.data, "html.parser")
+        raw_data = json.loads(self.rest.data)
         _LOGGER.debug(raw_data)
         return raw_data
 
@@ -157,12 +164,19 @@ class FitxSensor(SensorEntity):
         try:
             raw_data = await self.hass.async_add_executor_job(self._get_raw_data)
             
-            self._attrs[ATTR_STUDIO_NAME] = str(raw_data.find("h1", class_="studio_hero__headline")).split("</span>")[1].split("</h1>")[0]
+            items = raw_data["items"]
+            current = None
+
+            for item in items:
+                if item["isCurrent"]:
+                    current = item
+                    break
             
-            self._attrs[ATTR_ADDRESS] = str(raw_data.find("p", class_="studio_hero__address")).split(">\n          ")[1].split("        </p>")[0].replace(" · ", ", ")
+            if current is None:
+                raise FitxRequestError
             
-            studioGraph = raw_data.find("section", class_="studio_graph")
-            self._state = int(studioGraph["data-current-day-data"][1:-1].split(",")[-1])
+            self._state = current["percentage"]
+
             if self._state is None:
                 raise FitxRequestError
             self._available = True
