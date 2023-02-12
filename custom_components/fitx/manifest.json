@@ -7,7 +7,7 @@
   "domain": "fitx",
   "iot_class": "cloud_polling",
   "name": "FitX Gym Utilization Rate Sensor for Home Assistant",
-  "requirements": ["beautifulsoup4>=4.4.0"],
+  "requirements": [],
   "after_dependencies": ["rest"],
   "version": "0.0.3"
 }
