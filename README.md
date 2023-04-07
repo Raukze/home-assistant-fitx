@@ -30,9 +30,8 @@ Copy the `fitx` folder from `custom_components/` to the `custom_components/`dire
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| id **(required)** | string | | Name of the gym from [here](https://www.fitx.de/fitnessstudios "FitX Locations").  |
-| name | string | Value of `id` | Name of the FitX utilization rate sensor. |
-| num_id **(required)** | int | | Numerical id of the studio. See [Numeric ID](#numeric-id)
+| id **(required)** | int | | Numerical id of the studio. See [Numeric ID](#numeric-id) |
+| name | string | Name for `id` via API | Name of the FitX utilization rate sensor. |
 
 ### Example Configuration
 
@@ -42,9 +41,8 @@ So if the gym you want to track is https://www.fitx.de/fitnessstudios/bielefeld-
 sensor:
   - platform: fitx
     locations:
-      - id: bielefeld-mitte
+      - id: 1516366190
         name: Gym Bielefeld
-        num_id: 1516366190
 ```
 
 ### Sensor Attributes

@@ -22,9 +22,7 @@ from .const import (
     ATTR_STUDIO_NAME,
     ATTR_URL,
     CONF_ID,
-    CONF_NUM_ID,
     DEFAULT_ENDPOINT,
-    ATTR_NUM_ID,
     ICON,
     CONF_LOCATIONS,
     REQUEST_AUTH,
@@ -39,8 +37,7 @@ SCAN_INTERVAL = timedelta(minutes=10)
 STUDIO_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ID): cv.string,
-        vol.Optional(CONF_NAME): cv.string,
-        vol.Required(CONF_NUM_ID): cv.string
+        vol.Optional(CONF_NAME): cv.string
     }
 )
 
@@ -59,15 +56,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     # sensors = [FitxSensor(hass, location) for location in config[CONF_LOCATIONS]]
     sensors = []
     for location in config[CONF_LOCATIONS]:
-        id = location[CONF_ID].lower()\
-            .replace(" ", "-")\
-            .replace("ä", "ae")\
-            .replace("ü", "ue")\
-            .replace("ö", "oe")\
-            .replace("ß", "ss")\
-            .replace(".", "")
-        num_id = location[CONF_NUM_ID]
-        url = DEFAULT_ENDPOINT.format(num_id=num_id)
+        id = location[CONF_ID]
+        url = DEFAULT_ENDPOINT.format(id=id)
         name = location[CONF_ID]
         if CONF_NAME in location:
             name = location[CONF_NAME]
@@ -78,7 +68,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         if rest.data is None:
             raise PlatformNotReady
         
-        sensors.append(FitxSensor(rest, id, url, name, num_id))
+        sensors.append(FitxSensor(rest, id, name))
 
     async_add_entities(sensors, update_before_add=True)
 
@@ -86,17 +76,13 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class FitxSensor(SensorEntity):
     """Representation of a FitX sensor."""
 
-    def __init__(self, rest, id, url, name, num_id):
+    def __init__(self, rest, id, name):
         """Initialize a FitX sensor."""
         self.rest = rest
         self._id = id
-        self._url = url
-        self._num_id = num_id
         # TODO: Get attributes from https://mein.fitx.de/nox/public/v1/studios
         self._attrs = {
-                        ATTR_ID: self._id,
-                        ATTR_URL: self._url,
-                        ATTR_NUM_ID: self._num_id
+                        ATTR_ID: self._id
                       }
         self._name = self._id
         self._state = None
